@@ -56,8 +56,8 @@ END:VCARD`
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
-      <div className="container mx-auto flex flex-col items-center gap-8 py-24 text-center md:py-32 max-w-2xl py-12">
-        <Card className="overflow-hidden py-20">
+      <div className="container mx-auto my-auto max-w-2xl py-12">
+        <Card className="overflow-hidden pt-12">
           {/* Cover Image */}
           {user.cover_image_url && (
             <div className="h-32 w-full bg-gradient-to-r from-primary/20 to-primary/10">

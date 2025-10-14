@@ -42,7 +42,7 @@ export default async function DashboardPage() {
       <DashboardHeader user={profile} />
 
       <main className="flex-1 bg-muted/30">
-        <div className="container mx-auto flex flex-col items-center gap-8 py-24 text-center md:py-32">
+        <div className="container mx-auto py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">Manage your digital business card</p>

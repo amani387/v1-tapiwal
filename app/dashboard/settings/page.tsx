@@ -24,7 +24,7 @@ export default async function SettingsPage() {
       <DashboardHeader user={profile} />
 
       <main className="flex-1 bg-muted/30">
-        <div className="container max-w-4xl py-8">
+        <div className="container mx-auto max-w-4xl py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
             <p className="text-muted-foreground">Manage your account settings and preferences</p>

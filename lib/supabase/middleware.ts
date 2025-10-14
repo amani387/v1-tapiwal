@@ -2,13 +2,11 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
 export async function updateSession(request: NextRequest) {
-
   let supabaseResponse = NextResponse.next({
     request,
   })
 
   const supabase = createServerClient(
-    
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -31,6 +29,35 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  if (request.nextUrl.pathname === "/setup/super-admin") {
+    // Allow access to setup page only if no super admin exists
+    const { data: superAdminExists } = await supabase.rpc("super_admin_exists")
+
+    if (superAdminExists) {
+      const url = request.nextUrl.clone()
+      url.pathname = "/"
+      return NextResponse.redirect(url)
+    }
+    return supabaseResponse
+  }
+
+  if (request.nextUrl.pathname.startsWith("/admin/super")) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = "/auth/login"
+      return NextResponse.redirect(url)
+    }
+
+    // Check if user is super admin
+    const { data: profile } = await supabase.from("users").select("role").eq("id", user.id).single()
+
+    if (profile?.role !== "super_admin") {
+      const url = request.nextUrl.clone()
+      url.pathname = "/dashboard"
+      return NextResponse.redirect(url)
+    }
+  }
+
   // Check if user is trying to access admin routes
   if (request.nextUrl.pathname.startsWith("/admin")) {
     if (!user) {
@@ -39,10 +66,9 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    // Check if user is admin
-    const { data: profile } = await supabase.from("users").select("is_admin").eq("id", user.id).single()
+    const { data: profile } = await supabase.from("users").select("role").eq("id", user.id).single()
 
-    if (!profile?.is_admin) {
+    if (profile?.role !== "admin" && profile?.role !== "super_admin") {
       const url = request.nextUrl.clone()
       url.pathname = "/dashboard"
       return NextResponse.redirect(url)

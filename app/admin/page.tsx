@@ -16,10 +16,9 @@ export default async function AdminPage() {
     redirect("/auth/login")
   }
 
-  // Check if user is admin
   const { data: profile } = await supabase.from("users").select("*").eq("id", user.id).single()
 
-  if (!profile?.is_admin) {
+  if (profile?.role !== "admin" && profile?.role !== "super_admin") {
     redirect("/dashboard")
   }
 
@@ -39,7 +38,7 @@ export default async function AdminPage() {
       <DashboardHeader user={profile} />
 
       <main className="flex-1 bg-muted/30">
-        <div className="container py-8">
+        <div className="container mx-auto py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
             <p className="text-muted-foreground">Manage users and monitor platform activity</p>

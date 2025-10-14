@@ -54,7 +54,7 @@ export default async function AnalyticsPage() {
       <DashboardHeader user={profile} />
 
       <main className="flex-1 bg-muted/30">
-        <div className="container py-8">
+        <div className="container mx-auto py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
             <p className="text-muted-foreground">Track your profile performance and engagement</p>

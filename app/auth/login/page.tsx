@@ -26,12 +26,26 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data,error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
-      if (error) throw error
+       // ✅ Fetch the user profile to check the role
+    const { data: profile, error: profileError } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", data.user?.id)
+      .single()
+console.log("Login profile fetch:", { profile, profileError })
+    if (profileError) throw profileError
+
+    // ✅ Redirect based on role
+    if (profile?.role === "super_admin") {
+      router.push("/admin/super")
+    } else {
       router.push("/dashboard")
+    }
+
       router.refresh()
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")

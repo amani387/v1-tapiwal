@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { createClient } from "@/lib/supabase/client"
-import { Zap, User, LogOut, BarChart3, Settings, Shield } from "lucide-react"
+import { Zap, User, LogOut, BarChart3, Settings, Shield, ShoppingBag, Crown } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { User as UserType } from "@/lib/types"
@@ -52,13 +52,29 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
               Analytics
             </Button>
           </Link>
-          {user?.is_admin && (
-            <Link href="/admin">
+          {user?.role === "super_admin" && (
+            <Link href="/admin/super">
               <Button variant="ghost" size="sm">
-                <Shield className="mr-2 h-4 w-4" />
-                Admin
+                <Crown className="mr-2 h-4 w-4" />
+                Super Admin
               </Button>
             </Link>
+          )}
+          {(user?.role === "admin" || user?.role === "super_admin") && (
+            <>
+              <Link href="/admin/orders">
+                <Button variant="ghost" size="sm">
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  Orders
+                </Button>
+              </Link>
+              <Link href="/admin">
+                <Button variant="ghost" size="sm">
+                  <Shield className="mr-2 h-4 w-4" />
+                  Admin
+                </Button>
+              </Link>
+            </>
           )}
 
           <DropdownMenu>
@@ -84,13 +100,29 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                   Analytics
                 </Link>
               </DropdownMenuItem>
-              {user?.is_admin && (
+              {user?.role === "super_admin" && (
                 <DropdownMenuItem asChild>
-                  <Link href="/admin">
-                    <Shield className="mr-2 h-4 w-4" />
-                    Admin
+                  <Link href="/admin/super">
+                    <Crown className="mr-2 h-4 w-4" />
+                    Super Admin
                   </Link>
                 </DropdownMenuItem>
+              )}
+              {(user?.role === "admin" || user?.role === "super_admin") && (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/orders">
+                      <ShoppingBag className="mr-2 h-4 w-4" />
+                      Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin">
+                      <Shield className="mr-2 h-4 w-4" />
+                      Admin
+                    </Link>
+                  </DropdownMenuItem>
+                </>
               )}
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/settings">
