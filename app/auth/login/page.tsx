@@ -33,11 +33,11 @@ export default function LoginPage() {
        // ✅ Fetch the user profile to check the role
     const { data: profile, error: profileError } = await supabase
       .from("users")
-    .select("role, isActive")
+       .select("role, is_active")
       .eq("id", data.user?.id)
       .single()
-
-         if (!profile?.isActive) {
+console.log("Login data fetch:", { profile, error })
+         if (!profile?.is_active) {
         setError("Your profile is deactivated. Please contact Tapiwal Company.")
         await supabase.auth.signOut() // make sure they’re logged out
         router.push("/auth/login") // stay on login page
