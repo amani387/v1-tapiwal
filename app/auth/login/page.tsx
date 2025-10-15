@@ -33,16 +33,33 @@ export default function LoginPage() {
        // ✅ Fetch the user profile to check the role
     const { data: profile, error: profileError } = await supabase
       .from("users")
-      .select("role")
+    .select("role, isActive")
       .eq("id", data.user?.id)
       .single()
-console.log("Login profile fetch:", { profile, profileError })
-    if (profileError) throw profileError
+
+         if (!profile?.isActive) {
+        setError("Your profile is deactivated. Please contact Tapiwal Company.")
+        await supabase.auth.signOut() // make sure they’re logged out
+        router.push("/auth/login") // stay on login page
+        return
+      }
+console.error("Login profile fetch:", { profile, profileError })
+      if (profileError) {
+        console.error("[v0] Error fetching user profile:", profileError)
+        throw new Error("Failed to fetch user profile")
+      }
 
     // ✅ Redirect based on role
     if (profile?.role === "super_admin") {
-      router.push("/admin/super")
-    } else {
+        console.log("[v0] Redirecting to super admin dashboard")
+     router.push("/admin/super")
+      } 
+      else if (profile?.role === "admin")
+         {
+        console.log("[v0] Redirecting to admin dashboard")
+        router.push("/admin")
+        }
+         else {
       router.push("/dashboard")
     }
 
