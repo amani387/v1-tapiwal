@@ -38,7 +38,7 @@ if (!profile?.role || !['admin','super_admin'].includes(profile.role)) {
       email,
       account_type: accountType,
       order_id: orderId,
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
+      expires_at: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day
     })
 
     if (inviteError) {
