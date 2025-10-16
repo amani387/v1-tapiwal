@@ -44,7 +44,7 @@ export default function SuperAdminSetupPage() {
 
       console.log("[v0] Checking if super admin exists...")
 
-      const { exists, error: checkError } = await checkSuperAdminExists()
+      const { exists, checkError } = await checkSuperAdminExists()
 
       console.log("[v0] Super admin exists check:", { exists, checkError })
 

@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Mail, Phone, MapPin, Globe, ExternalLink } from "lucide-react"
+import { Mail, Phone, MapPin, Globe, Download, Share2, Building, Calendar } from "lucide-react"
 import { SocialLinkButton } from "./social-link-button"
 import type { User, SocialLink } from "@/lib/types"
 
@@ -13,6 +13,9 @@ interface PublicProfileViewProps {
 }
 
 export function PublicProfileView({ user, socialLinks }: PublicProfileViewProps) {
+  const [isVisible, setIsVisible] = useState(false)
+  const [currentTime, setCurrentTime] = useState("")
+
   useEffect(() => {
     // Track profile view
     fetch("/api/analytics/track", {
@@ -20,20 +23,32 @@ export function PublicProfileView({ user, socialLinks }: PublicProfileViewProps)
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: user.id }),
     })
+
+    // Set current time for the user's timezone
+    const updateTime = () => {
+      const now = new Date()
+      setCurrentTime(now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+      }))
+    }
+    
+    updateTime()
+    const timer = setInterval(updateTime, 30000)
+    
+    // Simple fade-in animation
+    const animationTimer = setTimeout(() => setIsVisible(true), 100)
+    
+    return () => {
+      clearInterval(timer)
+      clearTimeout(animationTimer)
+    }
   }, [user.id])
 
-  const handleContactClick = (type: string, value: string) => {
-    if (type === "email") {
-      window.location.href = `mailto:${value}`
-    } else if (type === "phone") {
-      window.location.href = `tel:${value}`
-    }
-  }
-
-  const handleSaveContact = () => {
-    // Generate vCard
+  const handleSaveContact = async () => {
     const vCard = `BEGIN:VCARD
-VERSION:3.0
+VERSION:4.0
 FN:${user.full_name}
 ${user.job_title ? `TITLE:${user.job_title}` : ""}
 ${user.company ? `ORG:${user.company}` : ""}
@@ -43,156 +58,218 @@ ${user.website ? `URL:${user.website}` : ""}
 ${user.location ? `ADR:;;${user.location};;;` : ""}
 END:VCARD`
 
-    const blob = new Blob([vCard], { type: "text/vcard" })
+    const blob = new Blob([vCard], { type: "text/vcard;charset=utf-8" })
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.href = url
     link.download = `${user.full_name.replace(/\s+/g, "_")}.vcf`
-    document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
   }
 
+  const handleShare = async () => {
+    if (navigator.share) {
+      await navigator.share({
+        title: `Contact ${user.full_name}`,
+        text: `Check out ${user.full_name}'s contact information`,
+        url: window.location.href,
+      })
+    } else {
+      await navigator.clipboard.writeText(window.location.href)
+    }
+  }
+
+  const contactItems = [
+    { key: 'email', icon: Mail, value: user.email, action: () => window.location.href = `mailto:${user.email}` },
+    { key: 'phone', icon: Phone, value: user.phone, action: () => window.location.href = `tel:${user.phone}` },
+    { key: 'location', icon: MapPin, value: user.location },
+    { key: 'website', icon: Globe, value: user.website, action: () => window.open(user.website, '_blank') },
+  ].filter(item => item.value)
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
-      <div className="container mx-auto my-auto max-w-2xl py-12">
-        <Card className="overflow-hidden pt-12">
-          {/* Cover Image */}
-          {user.cover_image_url && (
-            <div className="h-32 w-full bg-gradient-to-r from-primary/20 to-primary/10">
-              <img
-                src={user.cover_image_url || "/placeholder.svg"}
-                alt="Cover"
-                className="h-full w-full object-cover"
-              />
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-accent/5">
+      <div className="container mx-auto max-w-4xl px-4 py-8">
+        {/* Header with Time */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 bg-primary rounded-full animate-pulse" />
+            <span className="text-sm font-medium text-muted-foreground">Online • {currentTime}</span>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleShare}
+            className="border-border hover:bg-accent"
+          >
+            <Share2 className="h-4 w-4 mr-2" />
+            Share Profile
+          </Button>
+        </div>
+
+        <div className={`transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+          {/* Main Profile Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Profile Card */}
+            <div className="lg:col-span-1">
+              <Card className="border-border bg-card shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6">
+                  {/* Profile Header */}
+                  <div className="flex flex-col items-center text-center gap-4">
+                    {/* Avatar */}
+                    <div className="relative">
+                      {user.profile_image_url ? (
+                        <img
+                          src={user.profile_image_url}
+                          alt={user.full_name}
+                          className="h-24 w-24 rounded-full object-cover border-4 border-background shadow-lg"
+                        />
+                      ) : (
+                        <div className="h-24 w-24 rounded-full bg-gradient-to-br from-primary/20 to-chart-3/20 flex items-center justify-center text-2xl font-bold text-primary border-4 border-background shadow-lg">
+                          {user.full_name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Name and Title */}
+                    <div className="space-y-2">
+                      <h1 className="text-2xl font-bold text-foreground">{user.full_name}</h1>
+                      {user.job_title && (
+                        <p className="text-primary font-semibold">{user.job_title}</p>
+                      )}
+                      {user.company && (
+                        <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                          <Building className="h-4 w-4" />
+                          <span className="text-sm">{user.company}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Bio */}
+                    {user.bio && (
+                      <p className="text-muted-foreground text-sm leading-relaxed bg-muted/30 rounded-lg p-4">
+                        {user.bio}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Save Contact Button */}
+                  <Button 
+                    onClick={handleSaveContact} 
+                    className="w-full mt-6 bg-primary hover:bg-primary/90"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Save Contact
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
-          )}
 
-          <CardContent className="p-8">
-            {/* Profile Header */}
-            <div className="flex flex-col items-center gap-4 text-center">
-              <div className="relative -mt-20">
-                {user.profile_image_url ? (
-                  <img
-                    src={user.profile_image_url || "/placeholder.svg"}
-                    alt={user.full_name}
-                    className="h-32 w-32 rounded-full border-4 border-background object-cover shadow-lg"
-                  />
-                ) : (
-                  <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-background bg-primary/10 text-5xl font-bold text-primary shadow-lg">
-                    {user.full_name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight">{user.full_name}</h1>
-                {user.job_title && (
-                  <p className="text-lg text-muted-foreground">
-                    {user.job_title}
-                    {user.company && ` at ${user.company}`}
-                  </p>
-                )}
-              </div>
-
-              {user.bio && <p className="max-w-md text-muted-foreground">{user.bio}</p>}
-
-              {/* Contact Info */}
-              <div className="w-full space-y-3 pt-4">
-                {user.email && (
-                  <button
-                    onClick={() => handleContactClick("email", user.email!)}
-                    className="flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-muted"
-                  >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <Mail className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Email</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
-                    </div>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  </button>
-                )}
-
-                {user.phone && (
-                  <button
-                    onClick={() => handleContactClick("phone", user.phone!)}
-                    className="flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-muted"
-                  >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <Phone className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Phone</p>
-                      <p className="text-sm text-muted-foreground">{user.phone}</p>
-                    </div>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  </button>
-                )}
-
-                {user.location && (
-                  <div className="flex w-full items-center gap-3 rounded-lg border p-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <MapPin className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Location</p>
-                      <p className="text-sm text-muted-foreground">{user.location}</p>
-                    </div>
-                  </div>
-                )}
-
-                {user.website && (
-                  <a
-                    href={user.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex w-full items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted"
-                  >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <Globe className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">Website</p>
-                      <p className="truncate text-sm text-muted-foreground">{user.website}</p>
-                    </div>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  </a>
-                )}
-              </div>
-
-              {/* Social Links */}
-              {socialLinks.length > 0 && (
-                <div className="w-full space-y-3 pt-4">
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                    Connect With Me
+            {/* Right Column - Contact & Social */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Contact Information */}
+              <Card className="border-border bg-card shadow-lg">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full" />
+                    Contact Information
                   </h2>
-                  <div className="grid gap-2">
-                    {socialLinks.map((link) => (
-                      <SocialLinkButton key={link.id} link={link} />
+                  <div className="grid gap-3">
+                    {contactItems.map((item) => (
+                      <div
+                        key={item.key}
+                        className="flex items-center gap-4 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                          <item.icon className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground capitalize">
+                            {item.key}
+                          </p>
+                          <p className="text-sm text-muted-foreground truncate">
+                            {item.value}
+                          </p>
+                        </div>
+                        {item.action && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={item.action}
+                            className="text-primary hover:text-primary/80"
+                          >
+                            Connect
+                          </Button>
+                        )}
+                      </div>
                     ))}
                   </div>
-                </div>
-              )}
-
-              {/* Save Contact Button */}
-              <Button onClick={handleSaveContact} size="lg" className="w-full">
-                Save Contact
-              </Button>
+                </CardContent>
+              </Card>
+{/* Social Links */}
+{socialLinks.length > 0 && (
+  <Card className="border-border bg-card shadow-lg">
+    <CardContent className="p-6">
+      <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+        <div className="w-2 h-2 bg-chart-2 rounded-full" />
+        Digital Presence
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {socialLinks.map((link) => (
+          <div key={link.id} className="min-w-0"> {/* Container to prevent overflow */}
+            <SocialLinkButton link={link} />
+          </div>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+)}
+              {/* Additional Info */}
+              <Card className="border-border bg-card shadow-lg">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-chart-3 rounded-full" />
+                    Profile Details
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium text-foreground">Profile Created</p>
+                        <p className="text-muted-foreground">Recently</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                      <div className="h-4 w-4 rounded-full bg-chart-4" />
+                      <div>
+                        <p className="font-medium text-foreground">Status</p>
+                        <p className="text-muted-foreground">Available</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Powered by Tapiwal */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            Powered by{" "}
-            <a href="/" className="font-medium underline underline-offset-4">
-              Tapiwal
-            </a>
-          </p>
+          {/* Footer */}
+          <div className="mt-12 text-center border-t border-border pt-8">
+            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                <span>Secure Connection</span>
+              </div>
+              <div className="w-px h-4 bg-border" />
+              <span>
+                Powered by{" "}
+                <a 
+                  href="/" 
+                  className="font-semibold text-primary hover:text-primary/80 transition-colors"
+                >
+                  Tapiwal
+                </a>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

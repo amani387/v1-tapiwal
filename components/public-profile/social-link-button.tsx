@@ -90,7 +90,7 @@ export function SocialLinkButton({ link }: SocialLinkButtonProps) {
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex w-full items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted"
+      className="flex w-full items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted truncate text-sm text-muted-foreground"
     >
       <div className={`flex h-10 w-10 items-center justify-center rounded-full ${config.color}`}>{config.icon}</div>
       <div className="flex-1">
