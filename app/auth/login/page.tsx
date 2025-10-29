@@ -117,12 +117,12 @@ console.error("Login profile fetch:", { profile, profileError })
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </div>
-              <div className="mt-4 text-center text-sm">
+              {/* <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}
                 <Link href="/auth/sign-up" className="font-medium underline underline-offset-4">
                   Sign up
                 </Link>
-              </div>
+              </div> */}
             </form>
           </CardContent>
         </Card>

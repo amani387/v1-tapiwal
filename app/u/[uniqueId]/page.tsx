@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { PublicProfileView } from "@/components/public-profile/public-profile-view"
+import { HotelProfileView } from "@/components/public-profile/hotel-profile-view"
 
 interface PageProps {
   params: Promise<{
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: PageProps) {
 
   const { data: user } = await supabase
     .from("users")
-    .select("full_name, bio, job_title, company")
+    .select("full_name, bio, job_title, company, account_type")
     .eq("unique_id", uniqueId)
     .eq("is_active", true)
     .single()
@@ -47,7 +48,37 @@ export default async function PublicProfilePage({ params }: PageProps) {
     notFound()
   }
 
-  // Fetch social links
+  if (user.account_type === "hotel") {
+    // Fetch hotel menu
+    const { data: hotelMenu } = await supabase
+      .from("hotel_menus")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("is_active", true)
+      .single()
+
+    // Fetch menu categories
+    const { data: categories } = await supabase
+      .from("menu_categories")
+      .select("*")
+      .eq("menu_id", hotelMenu?.id || "")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true })
+
+    // Fetch menu items
+    const { data: menuItems } = await supabase
+      .from("menu_items")
+      .select("*")
+      .in("category_id", categories?.map((c) => c.id) || [])
+      .eq("is_available", true)
+      .order("display_order", { ascending: true })
+
+    return (
+      <HotelProfileView user={user} hotelMenu={hotelMenu} categories={categories || []} menuItems={menuItems || []} />
+    )
+  }
+
+  // Fetch social links for regular profiles
   const { data: socialLinks } = await supabase
     .from("social_links")
     .select("*")

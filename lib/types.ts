@@ -13,7 +13,7 @@ export interface User {
   website?: string
   is_admin: boolean
   role: "super_admin" | "admin" | "user"
-  account_type?: "individual" | "company"
+  account_type?: "individual" | "company" | "hotel"
   company_id?: string
   is_active: boolean
   created_at: string
@@ -64,17 +64,16 @@ export type SocialPlatform =
 
 export interface Order {
   id: string
-  order_type: "individual" | "company"
+  order_type: "individual" | "company" | "hotel"
   full_name: string
   email: string
   phone: string
   company_name?: string
   number_of_cards: number
   message?: string
-  status: "pending" | "contacted" | "paid" | "completed" | "cancelled"| "invitation_sent"
+  status: "pending" | "contacted" | "paid" | "completed" | "cancelled"
   created_at: string
   updated_at: string
-  quantity: number
 }
 
 export interface Invitation {
@@ -82,7 +81,7 @@ export interface Invitation {
   code: string
   email: string
   order_id?: string
-  account_type: "individual" | "company"
+  account_type: "individual" | "company" | "hotel"
   number_of_cards: number
   used: boolean
   used_by?: string
@@ -129,4 +128,38 @@ export interface AdminActivityLog {
   target_user_id?: string
   details?: Record<string, any>
   created_at: string
+}
+
+export interface HotelMenu {
+  id: string
+  user_id: string
+  hotel_name: string
+  description?: string
+  logo_url?: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface MenuCategory {
+  id: string
+  menu_id: string
+  name: string
+  description?: string
+  display_order: number
+  is_active: boolean
+  created_at: string
+}
+
+export interface MenuItem {
+  id: string
+  category_id: string
+  name: string
+  description?: string
+  price: number
+  image_url?: string
+  is_available: boolean
+  display_order: number
+  created_at: string
+  updated_at: string
 }

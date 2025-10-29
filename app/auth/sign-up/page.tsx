@@ -8,18 +8,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
-import { Zap } from "lucide-react"
+import { Zap, Building2, User } from "lucide-react"
 
 export default function SignUpPage() {
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [repeatPassword, setRepeatPassword] = useState("")
+  const [accountType, setAccountType] = useState<"individual" | "company" | "hotel">("individual")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const inviteCode = searchParams.get("invite")
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -47,6 +50,7 @@ export default function SignUpPage() {
           emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`,
           data: {
             full_name: fullName,
+            account_type: accountType,
           },
         },
       })
@@ -79,6 +83,48 @@ export default function SignUpPage() {
           <CardContent>
             <form onSubmit={handleSignUp}>
               <div className="flex flex-col gap-6">
+                <div className="grid gap-3">
+                  <Label className="text-base font-semibold">Account Type</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAccountType("individual")}
+                      className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${
+                        accountType === "individual"
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <User className="h-5 w-5" />
+                      <span className="text-xs font-medium">Individual</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAccountType("company")}
+                      className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${
+                        accountType === "company"
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <Building2 className="h-5 w-5" />
+                      <span className="text-xs font-medium">Company</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAccountType("hotel")}
+                      className={`flex flex-col items-center gap-2 rounded-lg border-2 p-3 transition-all ${
+                        accountType === "hotel"
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <Building2 className="h-5 w-5" />
+                      <span className="text-xs font-medium">Hotel</span>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="fullName">Full Name</Label>
                   <Input

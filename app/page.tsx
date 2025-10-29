@@ -5,7 +5,7 @@ import { Zap, Share2, BarChart3, Shield, Smartphone, Globe, Building2, User, Arr
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col">
+        <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-20 items-center justify-between">
           <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
@@ -24,7 +24,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-     <section className="container mx-auto flex flex-col items-center gap-8 py-24 text-center md:py-32">
+      <section className="flex flex-col items-center gap-12 py-20 text-center md:py-32 lg:py-40">
         <div className="flex max-w-4xl flex-col items-center gap-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-muted/50 px-5 py-2 text-sm font-medium shadow-sm">
             <Zap className="h-4 w-4 text-primary" />
@@ -67,6 +67,20 @@ export default function LandingPage() {
               <ArrowRight className="mt-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
+          <Link href="/order/hotel" className="flex-1">
+            <Button
+              size="lg"
+              variant="outline"
+              className="group h-auto w-full flex-col gap-2 border-2 py-6 text-base shadow-sm transition-all hover:bg-accent hover:shadow-md bg-transparent"
+            >
+              <div className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                <span className="font-semibold">For Hotels</span>
+              </div>
+              <span className="text-xs font-normal text-muted-foreground">Digital menu cards</span>
+              <ArrowRight className="mt-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
         </div>
 
         {/* Hero Image */}
@@ -81,7 +95,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="border-t border-border/40 bg-muted/30 py-24 lg:py-32">
+    <section className="border-t border-border/40 bg-muted/30 py-24 lg:py-32">
         <div className="container mx-auto flex flex-col items-center gap-8 py-24 text-center md:py-32">
           <div className="mb-20 flex flex-col items-center gap-6 text-center">
             <h2 className="text-balance text-4xl font-bold tracking-tight md:text-5xl">
@@ -92,7 +106,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             <Card className="group border-border/50 shadow-sm transition-all hover:shadow-lg">
               <CardContent className="flex flex-col items-start gap-5 p-8">
                 <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
@@ -169,7 +183,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-24 lg:py-32">
+     <section id="how-it-works" className="py-24 lg:py-32">
        <div className="container mx-auto flex flex-col items-center gap-8 py-24 text-center md:py-32">
           <div className="mb-20 flex flex-col items-center gap-6 text-center">
             <h2 className="text-balance text-4xl font-bold tracking-tight md:text-5xl">How It Works</h2>
@@ -215,7 +229,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="border-t border-border/40 bg-muted/30 py-24 lg:py-32">
+     <section className="border-t border-border/40 bg-muted/30 py-24 lg:py-32">
          <div className="container mx-auto flex flex-col items-center gap-8 py-24 text-center md:py-32">
           <div className="flex flex-col items-center gap-10 text-center">
             <div className="flex max-w-3xl flex-col gap-6">
@@ -244,7 +258,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-border/40 py-12">
-       <div className="container mx-auto flex flex-col items-center gap-8 py-24 text-center md:py-32">
+        <div className="container">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-sm">
