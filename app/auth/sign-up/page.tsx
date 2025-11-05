@@ -43,7 +43,8 @@ export default function SignUpPage() {
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      console.log("Signing up with:", { fullName, email, accountType, inviteCode });
+      const { data: authData,error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -51,10 +52,27 @@ export default function SignUpPage() {
           data: {
             full_name: fullName,
             account_type: accountType,
+            role:"admin"
           },
         },
       })
       if (error) throw error
+      
+    // Only for hotels, create initial menu
+    if (accountType === "hotel") {
+      const userId = authData.user?.id;
+      if (!userId) throw new Error("No user ID found after signup.");
+
+      // Create default menu for the hotel
+      await supabase.from("hotel_menus").insert([
+        {
+          user_id: userId,
+          hotel_name: `${fullName}'s Hotel Menu`,
+          description: "This is your default menu. Add categories and items to get started.",
+        },
+      ]);
+    }
+
       router.push("/auth/sign-up-success")
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")

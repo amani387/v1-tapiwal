@@ -37,7 +37,7 @@ export default async function HotelCategoriesPage() {
       <DashboardHeader user={profile} />
 
       <main className="flex-1 bg-muted/30">
-        <div className="container py-8">
+        <div className="mx-auto container py-8">
           <div className="mb-8 flex items-center justify-between">
             <div>
               <Link

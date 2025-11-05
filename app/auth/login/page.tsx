@@ -33,7 +33,7 @@ export default function LoginPage() {
        // ✅ Fetch the user profile to check the role
     const { data: profile, error: profileError } = await supabase
       .from("users")
-       .select("role, is_active")
+       .select("role, is_active, account_type")
       .eq("id", data.user?.id)
       .single()
 console.log("Login data fetch:", { profile, error })
@@ -50,13 +50,18 @@ console.error("Login profile fetch:", { profile, profileError })
       }
 
     // ✅ Redirect based on role
-    if (profile?.role === "super_admin") {
-        console.log("[v0] Redirecting to super admin dashboard")
-     router.push("/admin/super")
-      } 
-      else if (profile?.role === "admin")
+      if (profile?.role === "super_admin") {
+          console.log("[v0] Redirecting to super admin dashboard")
+      router.push("/admin/super")
+        } 
+      else if (profile?.role === "admin" && profile?.account_type === "hotel")
          {
-        console.log("[v0] Redirecting to admin dashboard")
+        console.log("[v0] Redirecting to hotel dashboard")
+        router.push("/dashboard/hotel")
+        } 
+     else if (profile?.role === "admin")
+         {
+        console.log(" Redirecting to admin dashboard",profile?.account_type)
         router.push("/admin")
         }
          else {
