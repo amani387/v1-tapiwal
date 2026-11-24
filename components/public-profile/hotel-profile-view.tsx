@@ -4,14 +4,19 @@ import { useState } from "react"
 import { Heart, MapPin, Phone, Mail, Search } from "lucide-react"
 import type { User } from "@/lib/types"
 
+import Link from "next/link"
+import { ArrowLeft, Crown, Shield } from "lucide-react"
+
 interface HotelProfileViewProps {
   user: User
   hotelMenu: any
   categories: any[]
   menuItems: any[]
+  viewerRole?: string | null
+  isOwner?: boolean
 }
 
-export function HotelProfileView({ user, hotelMenu, categories, menuItems }: HotelProfileViewProps) {
+export function HotelProfileView({ user, hotelMenu, categories, menuItems, viewerRole, isOwner }: HotelProfileViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(categories[0]?.id || null)
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState("")
@@ -44,6 +49,36 @@ export function HotelProfileView({ user, hotelMenu, categories, menuItems }: Hot
       </div>
 
       <div className="relative z-10">
+        {/* Top Navigation Bar */}
+        {(viewerRole || isOwner) && (
+          <div className="border-b border-amber-900/30 bg-slate-950/80 backdrop-blur-md px-4 py-3 sticky top-0 z-50">
+            <div className="container mx-auto flex items-center justify-between">
+              <Link
+                href={
+                  viewerRole === "super_admin"
+                    ? "/admin/super"
+                    : viewerRole === "admin"
+                    ? "/admin"
+                    : isOwner
+                    ? "/dashboard/hotel"
+                    : "/dashboard"
+                }
+                className="inline-flex items-center gap-2 text-xs font-medium text-amber-200/80 hover:text-amber-100 transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                {viewerRole === "super_admin"
+                  ? "Back to Super Admin"
+                  : viewerRole === "admin"
+                  ? "Back to Admin"
+                  : isOwner
+                  ? "Back to Menu Editor"
+                  : "Back to Dashboard"}
+              </Link>
+              <span className="text-[11px] text-amber-200/50">Hotel Menu Preview</span>
+            </div>
+          </div>
+        )}
+
         {/* Hero Section */}
         <div className="min-h-[600px] flex flex-col items-center justify-center pt-12 px-4 text-center">
           <div className="mb-12 animate-fade-in">

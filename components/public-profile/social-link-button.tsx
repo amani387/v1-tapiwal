@@ -90,14 +90,14 @@ export function SocialLinkButton({ link }: SocialLinkButtonProps) {
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex w-full items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted truncate text-sm text-muted-foreground"
+      className="flex w-full items-center gap-3 rounded-xl border border-border/60 bg-card p-3.5 transition-all hover:bg-muted/50 hover:border-border min-w-0 shadow-xs"
     >
-      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${config.color}`}>{config.icon}</div>
-      <div className="flex-1">
-        <p className="text-sm font-medium">{config.label}</p>
-        <p className="truncate text-sm text-muted-foreground">{link.url}</p>
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${config.color}`}>{config.icon}</div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-foreground tracking-tight">{config.label}</p>
+        <p className="truncate text-xs text-muted-foreground font-mono" title={link.url}>{link.url}</p>
       </div>
-      <ExternalLink className="h-4 w-4 text-muted-foreground" />
+      <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" />
     </a>
   )
 }

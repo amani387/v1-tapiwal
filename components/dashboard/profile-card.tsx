@@ -39,29 +39,29 @@ export function ProfileCard({ profile }: ProfileCardProps) {
 
           {profile.bio && <p className="text-sm text-muted-foreground">{profile.bio}</p>}
 
-          <div className="w-full space-y-2 text-left text-sm">
+          <div className="w-full space-y-2 text-left text-sm min-w-0">
             {profile.email && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Mail className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-muted-foreground min-w-0" title={profile.email}>
+                <Mail className="h-4 w-4 shrink-0" />
                 <span className="truncate">{profile.email}</span>
               </div>
             )}
             {profile.phone && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Phone className="h-4 w-4" />
-                <span>{profile.phone}</span>
+              <div className="flex items-center gap-2 text-muted-foreground min-w-0" title={profile.phone}>
+                <Phone className="h-4 w-4 shrink-0" />
+                <span className="truncate">{profile.phone}</span>
               </div>
             )}
             {profile.location && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <MapPin className="h-4 w-4" />
-                <span>{profile.location}</span>
+              <div className="flex items-center gap-2 text-muted-foreground min-w-0" title={profile.location}>
+                <MapPin className="h-4 w-4 shrink-0" />
+                <span className="truncate">{profile.location}</span>
               </div>
             )}
             {profile.company && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Briefcase className="h-4 w-4" />
-                <span>{profile.company}</span>
+              <div className="flex items-center gap-2 text-muted-foreground min-w-0" title={profile.company}>
+                <Briefcase className="h-4 w-4 shrink-0" />
+                <span className="truncate">{profile.company}</span>
               </div>
             )}
           </div>

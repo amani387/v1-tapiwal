@@ -56,7 +56,7 @@ export default function HotelOrderPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
-        <div className="c flex h-20 items-center justify-between">
+        <div className="container flex h-20 items-center justify-between">
           <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-sm">
               <Zap className="h-6 w-6 text-primary-foreground" />

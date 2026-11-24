@@ -91,16 +91,16 @@ export function SocialLinksManager({ socialLinks, userId }: SocialLinksManagerPr
         {socialLinks.length > 0 && (
           <div className="space-y-2">
             {socialLinks.map((link) => (
-              <div key={link.id} className="flex items-center gap-2 rounded-lg border p-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/10">
+              <div key={link.id} className="flex items-center gap-3 rounded-lg border p-3 min-w-0 bg-card">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   {platformIcons[link.platform as SocialPlatform]}
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium capitalize">{link.platform}</p>
-                  <p className="truncate text-xs text-muted-foreground">{link.url}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium capitalize truncate">{link.platform}</p>
+                  <p className="truncate text-xs text-muted-foreground font-mono" title={link.url}>{link.url}</p>
                 </div>
-                <Button size="icon" variant="ghost" onClick={() => handleDeleteLink(link.id)} disabled={isLoading}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
+                <Button size="icon" variant="ghost" className="shrink-0 h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDeleteLink(link.id)} disabled={isLoading}>
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             ))}

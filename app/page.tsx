@@ -14,10 +14,15 @@ export default function LandingPage() {
             </div>
             <span className="text-2xl font-bold tracking-tight">Tapiwal</span>
           </Link>
-          <nav className="flex items-center gap-3">
+          <nav className="flex items-center gap-2 sm:gap-3">
             <Link href="/auth/login">
-              <Button variant="ghost" size="lg" className="text-base">
+              <Button variant="ghost" size="sm" className="font-medium text-sm">
                 Login
+              </Button>
+            </Link>
+            <Link href="/auth/sign-up">
+              <Button size="sm" className="font-semibold text-sm shadow-xs">
+                Create Account
               </Button>
             </Link>
           </nav>

@@ -70,8 +70,9 @@ export interface Order {
   phone: string
   company_name?: string
   number_of_cards: number
+  quantity?: number
   message?: string
-  status: "pending" | "contacted" | "paid" | "completed" | "cancelled"
+  status: "pending" | "contacted" | "paid" | "completed" | "cancelled" | "invitation_sent"
   created_at: string
   updated_at: string
 }

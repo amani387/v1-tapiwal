@@ -45,7 +45,7 @@ export function RecentViews({ views }: RecentViewsProps) {
             <p className="text-xs text-muted-foreground">Share your profile link to start tracking views</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1.5">
             {views.map((view) => (
               <div key={view.id} className="flex items-start gap-3 rounded-lg border p-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">

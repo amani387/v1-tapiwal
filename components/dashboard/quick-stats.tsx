@@ -50,10 +50,10 @@ export function QuickStats({ totalTaps, totalVisitors, uniqueId }: QuickStatsPro
           <CardTitle className="text-sm font-medium">Your Link</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2">
-            <code className="flex-1 truncate rounded bg-muted px-2 py-1 text-xs">{profileUrl}</code>
-            <Button size="sm" variant="ghost" onClick={handleCopy}>
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          <div className="flex items-center gap-2 min-w-0">
+            <code className="flex-1 min-w-0 truncate rounded bg-muted px-2 py-1 text-xs font-mono" title={profileUrl}>{profileUrl}</code>
+            <Button size="sm" variant="ghost" className="shrink-0 h-8 w-8 p-0" onClick={handleCopy} title="Copy link">
+              {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
             </Button>
           </div>
         </CardContent>
